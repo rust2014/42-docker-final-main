@@ -1,9 +1,17 @@
 FROM golang:1.22.0
+
 WORKDIR /app
-COPY go.mod go.sum ./ 
+
+ENV CGO_ENABLED=0
+ENV GOOS=linux
+ENV GOARCH=amd64
+
+COPY go.mod go.sum ./
+
 RUN go mod download
-COPY *.go ./
-COPY *.db ./
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /my_app 
-EXPOSE 8080
-CMD ["/my_app"] 
+
+COPY . .
+
+RUN go build -o /my_app 
+
+CMD ["/my_app"]
